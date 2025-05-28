@@ -33,57 +33,78 @@ class DataInitializer {
         passwordEncoder: PasswordEncoder
     ): CommandLineRunner {
         return CommandLineRunner {
-            // Create admin user
-            val admin = User(
-                username = "admin",
-                email = "admin@example.com",
-                password = passwordEncoder.encode("password"),
-                fullName = "Admin User",
-                role = User.Role.ROLE_ADMIN
-            )
-            userRepository.save(admin)
+            // Check if data already exists
+            if (userRepository.count() > 0 && postRepository.count() > 0) {
+                println("Data already exists, skipping initialization.")
+                return@CommandLineRunner
+            }
 
-            // Create regular user
-            val user = User(
-                username = "user",
-                email = "user@example.com",
-                password = passwordEncoder.encode("password"),
-                fullName = "Regular User"
-            )
-            userRepository.save(user)
+            // Create admin user if it doesn't exist
+            var admin: User
+            if (!userRepository.existsByUsername("admin")) {
+                admin = User(
+                    username = "admin",
+                    email = "admin@example.com",
+                    password = passwordEncoder.encode("password"),
+                    fullName = "Admin User",
+                    role = User.Role.ROLE_ADMIN
+                )
+                userRepository.save(admin)
+            } else {
+                admin = userRepository.findByUsername("admin").get()
+            }
 
-            // Create some posts
-            val post1 = Post(
-                title = "Welcome to VibeBoard",
-                content = "This is the first post on our bulletin board system. Feel free to explore and create your own posts!",
-                author = admin
-            )
-            postRepository.save(post1)
+            // Create regular user if it doesn't exist
+            var user: User
+            if (!userRepository.existsByUsername("user")) {
+                user = User(
+                    username = "user",
+                    email = "user@example.com",
+                    password = passwordEncoder.encode("password"),
+                    fullName = "Regular User"
+                )
+                userRepository.save(user)
+            } else {
+                user = userRepository.findByUsername("user").get()
+            }
 
-            val post2 = Post(
-                title = "Getting Started with Kotlin",
-                content = """
-                    Kotlin is a modern programming language that makes developers happier.
-                    It's concise, safe, interoperable with Java, and provides many ways to reuse code between multiple platforms.
+            // Create posts only if there are no posts
+            if (postRepository.count() == 0L) {
+                // Create some posts
+                val post1 = Post(
+                    title = "Welcome to VibeBoard",
+                    content = "This is the first post on our bulletin board system. Feel free to explore and create your own posts!",
+                    author = admin
+                )
+                postRepository.save(post1)
 
-                    Here are some key features:
-                    - Null safety
-                    - Extension functions
-                    - Data classes
-                    - Coroutines
-                """.trimIndent(),
-                author = admin
-            )
-            postRepository.save(post2)
+                val post2 = Post(
+                    title = "Getting Started with Kotlin",
+                    content = """
+                        Kotlin is a modern programming language that makes developers happier.
+                        It's concise, safe, interoperable with Java, and provides many ways to reuse code between multiple platforms.
 
-            val post3 = Post(
-                title = "My First Post",
-                content = "Hello everyone! This is my first post on VibeBoard. I'm excited to be part of this community!",
-                author = user
-            )
-            postRepository.save(post3)
+                        Here are some key features:
+                        - Null safety
+                        - Extension functions
+                        - Data classes
+                        - Coroutines
+                    """.trimIndent(),
+                    author = admin
+                )
+                postRepository.save(post2)
 
-            println("Data initialization completed!")
+                val post3 = Post(
+                    title = "My First Post",
+                    content = "Hello everyone! This is my first post on VibeBoard. I'm excited to be part of this community!",
+                    author = user
+                )
+                postRepository.save(post3)
+
+                println("Data initialization completed!")
+            } else {
+                println("Posts already exist, skipping post creation.")
+            }
         }
     }
 }
