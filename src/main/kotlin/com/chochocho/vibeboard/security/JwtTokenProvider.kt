@@ -25,7 +25,8 @@ class JwtTokenProvider(
     private val jwtExpirationMs: Long
 ) {
     private val key: SecretKey by lazy {
-        Keys.hmacShaKeyFor(jwtSecret.toByteArray())
+        Keys.hmacShaKeyFor(jwtSecret.toByteArray(Charsets.UTF_8))
+//        Keys.secretKeyFor(SignatureAlgorithm.HS512)
     }
 
     /**
