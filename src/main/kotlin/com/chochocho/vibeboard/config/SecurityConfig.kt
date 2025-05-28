@@ -87,6 +87,8 @@ class SecurityConfig(
                 auth
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/api/posts").permitAll()
                     .requestMatchers("/api/posts/{id}").permitAll()
                     .anyRequest().authenticated()
@@ -108,7 +110,8 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf("*")
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedMethods = listOf("GET", "POST", "DELETE")
         configuration.allowedHeaders = listOf("Authorization", "Content-Type")
         configuration.allowCredentials = false
         configuration.maxAge = 3600L
