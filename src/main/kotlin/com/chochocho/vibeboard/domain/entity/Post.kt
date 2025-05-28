@@ -29,6 +29,13 @@ class Post(
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
+
+    constructor() : this(
+        title = "",
+        content = "",
+        author = User()
+    )
+
     // Method to update post
     fun update(title: String, content: String) {
         this.title = title

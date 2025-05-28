@@ -35,7 +35,16 @@ class User(
     enum class Role {
         ROLE_USER, ROLE_ADMIN
     }
-    
+
+    // 기본 생성자 추가
+    constructor() : this(
+        username = "",
+        email = "",
+        password = ""
+        // id, fullName, role, createdAt, updatedAt는 주 생성자에서 기본값이 이미 설정되어 있음
+    )
+
+
     // Methods to update user information
     fun updateProfile(fullName: String?, email: String) {
         this.fullName = fullName
