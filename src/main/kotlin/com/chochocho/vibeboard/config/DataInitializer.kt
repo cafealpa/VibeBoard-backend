@@ -10,9 +10,21 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.security.crypto.password.PasswordEncoder
 
+/**
+ * 데이터 초기화를 담당하는 설정 클래스
+ * 개발 환경에서 테스트 데이터를 생성합니다.
+ */
 @Configuration
 class DataInitializer {
 
+    /**
+     * 애플리케이션 시작 시 초기 데이터를 생성하는 메소드
+     * 
+     * @param userRepository 사용자 저장소
+     * @param postRepository 게시물 저장소
+     * @param passwordEncoder 비밀번호 인코더
+     * @return 애플리케이션 시작 시 실행될 CommandLineRunner
+     */
     @Bean
     @Profile("!prod") // Only run in non-production environments
     fun initData(
@@ -30,7 +42,7 @@ class DataInitializer {
                 role = User.Role.ROLE_ADMIN
             )
             userRepository.save(admin)
-            
+
             // Create regular user
             val user = User(
                 username = "user",
@@ -39,7 +51,7 @@ class DataInitializer {
                 fullName = "Regular User"
             )
             userRepository.save(user)
-            
+
             // Create some posts
             val post1 = Post(
                 title = "Welcome to VibeBoard",
@@ -47,13 +59,13 @@ class DataInitializer {
                 author = admin
             )
             postRepository.save(post1)
-            
+
             val post2 = Post(
                 title = "Getting Started with Kotlin",
                 content = """
                     Kotlin is a modern programming language that makes developers happier.
                     It's concise, safe, interoperable with Java, and provides many ways to reuse code between multiple platforms.
-                    
+
                     Here are some key features:
                     - Null safety
                     - Extension functions
@@ -63,14 +75,14 @@ class DataInitializer {
                 author = admin
             )
             postRepository.save(post2)
-            
+
             val post3 = Post(
                 title = "My First Post",
                 content = "Hello everyone! This is my first post on VibeBoard. I'm excited to be part of this community!",
                 author = user
             )
             postRepository.save(post3)
-            
+
             println("Data initialization completed!")
         }
     }

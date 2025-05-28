@@ -19,6 +19,13 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
+/**
+ * 애플리케이션의 보안 설정을 담당하는 클래스
+ * Spring Security 설정, 인증 및 권한 부여 규칙을 정의합니다.
+ *
+ * @param userDetailsService 사용자 세부 정보 서비스 구현체
+ * @param jwtAuthenticationFilter JWT 인증 필터
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -27,6 +34,12 @@ class SecurityConfig(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) {
 
+    /**
+     * 인증 제공자를 구성하는 메소드
+     * 사용자 세부 정보 서비스와 비밀번호 인코더를 설정합니다.
+     *
+     * @return 구성된 DaoAuthenticationProvider 객체
+     */
     @Bean
     fun authenticationProvider(): DaoAuthenticationProvider {
         val authProvider = DaoAuthenticationProvider()
@@ -35,16 +48,35 @@ class SecurityConfig(
         return authProvider
     }
 
+    /**
+     * 인증 관리자를 제공하는 메소드
+     * 
+     * @param authConfig 인증 설정 객체
+     * @return 인증 관리자 객체
+     */
     @Bean
     fun authenticationManager(authConfig: AuthenticationConfiguration): AuthenticationManager {
         return authConfig.authenticationManager
     }
 
+    /**
+     * 비밀번호 인코더를 제공하는 메소드
+     * BCrypt 알고리즘을 사용하여 비밀번호를 암호화합니다.
+     *
+     * @return 비밀번호 인코더 객체
+     */
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
 
+    /**
+     * 보안 필터 체인을 구성하는 메소드
+     * HTTP 요청에 대한 보안 규칙, CORS, CSRF, 세션 관리 등을 설정합니다.
+     *
+     * @param http HttpSecurity 객체
+     * @return 구성된 SecurityFilterChain 객체
+     */
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -66,6 +98,12 @@ class SecurityConfig(
         return http.build()
     }
 
+    /**
+     * CORS 설정을 제공하는 메소드
+     * Cross-Origin Resource Sharing 정책을 구성합니다.
+     *
+     * @return CORS 설정 소스 객체
+     */
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
